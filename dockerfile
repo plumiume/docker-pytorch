@@ -57,6 +57,9 @@ RUN     uv add --python ${PYTHON_VERSION} --no-cache \
 
 FROM build-uv-torch AS build-uv-pyg
 
+ARG PYTORCH_VERSION=2.8.0
+ARG CUDA_PATH=cu128
+
 RUN     uv add --no-cache \
             --find-links https://data.pyg.org/whl/torch-${PYTORCH_VERSION}+${CUDA_PATH}.html \
             --index-strategy unsafe-best-match \
