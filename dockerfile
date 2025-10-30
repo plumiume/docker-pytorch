@@ -5,6 +5,12 @@ ARG BASE_IMAGE=ubuntu:24.04
 # ARG BASE_IMAGE=nvidia/cuda:12.8-runtime-ubuntu24.04
 # see https://hub.docker.com/r/nvidia/cuda
 
+ARG PYTHON_VERSION=3.12
+ARG PYTORCH_VERSION=2.8.0
+ARG TORCHVISION_VERSION=0.23.0
+ARG TORCHAUDIO_VERSION=2.8.0
+ARG CUDA_PATH=cu128
+
 FROM ${BASE_IMAGE} AS base-with-env
 
 ENV PATH "/opt/uv/bin:/opt/uv/.venv/bin:$PATH"
@@ -37,12 +43,6 @@ FROM build-base AS build-uv-torch
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /opt/uv/bin/
 
-ARG PYTHON_VERSION=3.12
-ARG PYTORCH_VERSION=2.8.0
-ARG TORCHVISION_VERSION=0.23.0
-ARG TORCHAUDIO_VERSION=2.8.0
-ARG CUDA_PATH=cu128
-
 WORKDIR /opt/uv
 RUN     uv init --bare --python ${PYTHON_VERSION} --managed-python
 RUN     uv add --python ${PYTHON_VERSION} --no-cache \
@@ -56,9 +56,6 @@ RUN     uv add --python ${PYTHON_VERSION} --no-cache \
             torchaudio==${TORCHAUDIO_VERSION}
 
 FROM build-uv-torch AS build-uv-pyg
-
-ARG PYTORCH_VERSION=2.8.0
-ARG CUDA_PATH=cu128
 
 RUN     uv add --no-cache \
             --find-links https://data.pyg.org/whl/torch-${PYTORCH_VERSION}+${CUDA_PATH}.html \
