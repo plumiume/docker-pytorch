@@ -25,8 +25,9 @@ RUN     apt-get update \
             build-essential \
             ca-certificates \
             ccache \
-            curl \
+            curl wget \
             git \
+            ssh-client \
             libjpeg-dev \
             libpng-dev \
     &&  rm -rf /var/lib/apt/lists/*
@@ -42,10 +43,18 @@ ENV PYTORCH_VERSION ${PYTORCH_VERSION}
 
 FROM build-base AS build-uv-torch
 
+ARG PYTHON_VERSION
+ARG PYTORCH_VERSION
+ARG TORCHVISION_VERSION
+ARG TORCHAUDIO_VERSION
+ARG CUDA_PATH
+
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /opt/uv/bin/
 
 WORKDIR /opt/uv
 RUN     uv init --bare --python ${PYTHON_VERSION} --managed-python
+RUN     uv add --python ${PYTHON_VERSION} --no-cache \
+            pip setuptools wheel
 RUN     uv add --python ${PYTHON_VERSION} --no-cache \
             --index https://download.pytorch.org/whl/${CUDA_PATH} \
             --index-strategy unsafe-best-match \
@@ -57,6 +66,9 @@ RUN     uv add --python ${PYTHON_VERSION} --no-cache \
             torchaudio==${TORCHAUDIO_VERSION}
 
 FROM build-uv-torch AS build-uv-pyg
+
+ARG PYTORCH_VERSION
+ARG CUDA_PATH
 
 RUN     uv add --no-cache \
             --find-links https://data.pyg.org/whl/torch-${PYTORCH_VERSION}+${CUDA_PATH}.html \
