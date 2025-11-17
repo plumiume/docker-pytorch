@@ -2,6 +2,8 @@
 
 PyTorch環境をDockerで簡単に構築・運用できる最小セットのリポジトリです。
 
+**Docker Hub**: [plumiiume/pytorch](https://hub.docker.com/r/plumiiume/pytorch)
+
 ## 特徴
 - ベースイメージやPyTorchバージョンを柔軟に指定可能
 - GPU/CPU両対応（nvidia/cudaイメージ利用可）
@@ -16,7 +18,11 @@ PyTorch環境をDockerで簡単に構築・運用できる最小セットのリ�
 ## 使い方
 ### Dockerイメージのビルド
 ```sh
-docker build -t pytorch-local .
+# デフォルト（final-slim: PyTorch基本パッケージのみ）
+docker build -t pytorch-local . --target final-slim
+
+# PyTorch Geometric含む完全版
+docker build -t pytorch-local . --target final-pyg
 ```
 ### コンテナの起動
 ```sh
@@ -33,9 +39,13 @@ make rebuild # クリーン→再ビルド
 ### CMake利用例（Visual Studio等）
 - `build`/`run`/`shell`/`clean`/`rebuild` ターゲットを選択
 
+## ビルドターゲット
+- `final-slim`: PyTorch基本パッケージ（torch, torchvision, torchaudio）のみ（デフォルト）
+- `final-pyg`: PyTorch Geometric関連パッケージを含む完全版
+
 ## ビルド引数
 - BASE_IMAGE, PYTHON_VERSION, PYTORCH_VERSION, TORCHVISION_VERSION, TORCHAUDIO_VERSION, CUDA_PATH
-- 例: `docker build -t pytorch-local . --build-arg PYTORCH_VERSION=2.7.0`
+- 例: `docker build -t pytorch-local . --target final-pyg --build-arg PYTORCH_VERSION=2.7.0`
 
 ## よくある課題
 - GPU利用時はDocker/NVIDIAドライバの互換性に注意

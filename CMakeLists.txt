@@ -13,6 +13,7 @@ set(CUDA_PATH cu128)
 
 add_custom_target(build
     COMMAND docker build -t ${IMAGE_NAME} .
+        --target final-slim
         --build-arg BASE_IMAGE=${BASE_IMAGE}
         --build-arg PYTHON_VERSION=${PYTHON_VERSION}
         --build-arg PYTORCH_VERSION=${PYTORCH_VERSION}

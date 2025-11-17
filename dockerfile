@@ -2,7 +2,8 @@
 
 ARG BASE_IMAGE=ubuntu:24.04
 # or
-# ARG BASE_IMAGE=nvidia/cuda:12.8-runtime-ubuntu24.04
+# ARG BASE_IMAGE=nvidia/cuda:12.8-cudnn-runtime-ubuntu24.04
+# ARG BASE_IMAGE=nvidia/cuda:12.8-cudnn-devel-ubuntu24.04
 # see https://hub.docker.com/r/nvidia/cuda
 
 ARG PYTHON_VERSION=3.12
@@ -68,8 +69,8 @@ RUN     uv add --no-cache \
             torch_spline_conv \
             torch_geometric
 
-FROM build-uv-torch AS final-slim-runtime
+FROM build-uv-torch AS final-slim
 WORKDIR /workspace
 
-FROM build-uv-pyg AS final-pyg-runtime
+FROM build-uv-pyg AS final-pyg
 WORKDIR /workspace
