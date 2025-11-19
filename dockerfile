@@ -51,6 +51,9 @@ ARG CUDA_PATH
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /opt/uv/bin/
 
+ENV UV_INDEX_STRATEGY=unsafe-best-match
+
+ENV UV_PROJECT=/opt/uv
 WORKDIR /opt/uv
 RUN     uv init --bare --python ${PYTHON_VERSION} --managed-python
 RUN     uv add --python ${PYTHON_VERSION} --no-cache \
@@ -70,6 +73,10 @@ FROM build-uv-torch AS build-uv-pyg
 ARG PYTORCH_VERSION
 ARG CUDA_PATH
 
+ENV UV_FIND_LINKS=https://data.pyg.org/whl/torch-${PYTORCH_VERSION}+${CUDA_PATH}.html
+
+ENV UV_PROJECT=/opt/uv
+WORKDIR /opt/uv
 RUN     uv add --no-cache \
             --find-links https://data.pyg.org/whl/torch-${PYTORCH_VERSION}+${CUDA_PATH}.html \
             --index-strategy unsafe-best-match \
